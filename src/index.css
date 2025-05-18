@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-montserrat text-light-dark bg-dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bebas text-light tracking-wide;
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl lg:text-6xl mb-6 text-center relative;
+  }
+
+  .section-title::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-primary mt-2;
+  }
+
+  .btn {
+    @apply px-6 py-3 rounded-md font-semibold transition-all duration-300 transform hover:scale-105 uppercase tracking-wider text-center;
+  }
+
+  .btn-primary {
+    @apply bg-primary dark:bg-primary-dark text-light;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary dark:bg-secondary-dark text-dark font-bold;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary hover:bg-primary hover:text-light;
+  }
+
+  .nav-link {
+    @apply relative px-4 py-2 font-medium hover:text-primary transition-colors duration-300;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link.active {
+    @apply text-primary;
+  }
+
+  .nav-link.active::after {
+    @apply w-full;
+  }
+  
+  .card {
+    @apply bg-dark-light rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300;
+  }
+}
+
+.trainer-card:hover .trainer-socials {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lightbox {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Ensures images in the gallery maintain their aspect ratio */
+.gallery-item {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1E1E1E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DC143C;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B01030;
+}
