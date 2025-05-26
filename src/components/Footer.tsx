@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Dumbbell,
-  Instagram,
-  Facebook,
-  Twitter,
-  Youtube,
-  ChevronRight,
-  Mail,
-} from "lucide-react";
+import { Dumbbell, Instagram, Phone, ChevronRight, Mail } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -28,32 +20,22 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://www.instagram.com/rvfitness007/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-dark-light hover:bg-primary transition-colors duration-300 p-2 rounded-full"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
               <a
-                href="#"
+                href="https://wa.me/919959023143"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-dark-light hover:bg-primary transition-colors duration-300 p-2 rounded-full"
-                aria-label="Facebook"
+                aria-label="WhatsApp"
               >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="bg-dark-light hover:bg-primary transition-colors duration-300 p-2 rounded-full"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="#"
-                className="bg-dark-light hover:bg-primary transition-colors duration-300 p-2 rounded-full"
-                aria-label="YouTube"
-              >
-                <Youtube size={20} />
+                <Phone size={20} />
               </a>
             </div>
           </div>

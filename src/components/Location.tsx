@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Check } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 const Location: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,9 @@ const Location: React.FC = () => {
   });
 
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -28,24 +32,41 @@ const Location: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, we would send this data to a backend server
-    console.log("Form submitted:", formData);
-    setFormSubmitted(true);
 
-    // Reset the form after submission
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
+    if (!formRef.current) return;
 
-    // Hide the success message after 5 seconds
-    setTimeout(() => {
-      setFormSubmitted(false);
-    }, 5000);
+    try {
+      const result = await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+      console.log("Email sent successfully:", result.text);
+      setFormSubmitted(true);
+      setFormError(null);
+
+      // Reset the form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+
+      // Hide the success message after 5 seconds
+      setTimeout(() => {
+        setFormSubmitted(false);
+      }, 5000);
+    } catch (error: any) {
+      console.error("Failed to send email:", error.text);
+      setFormError("Failed to send message. Please try again later.");
+      setTimeout(() => {
+        setFormError(null);
+      }, 5000);
+    }
   };
 
   return (
@@ -69,7 +90,6 @@ const Location: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <div className="rounded-lg overflow-hidden h-64 mb-8">
-              {/* This would normally be a Google Map embed */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.266647253179!2d78.48667531487673!3d17.447292688032282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99c8b609a75b%3A0x1f9c2e0f947509e0!2sStreet%20Number%2012%2C%20W%20Marredpally%20Rd%20500029%2C%20Marredpally%20West%2C%20Hyderabad!5e0!3m2!1sen!2sin!4v1715945959610!5m2!1sen!2sin"
                 className="w-full h-full border-2 border-dark-lighter rounded-lg"
@@ -88,7 +108,7 @@ const Location: React.FC = () => {
                 <div>
                   <h3 className="text-xl font-bebas mb-1">Our Location</h3>
                   <p className="text-light-dark">
-                  Street Number 12, W Marredpally Rd 500029, Marredpally West, Hyderabad
+                    Street Number 12, W Marredpally Rd 500029, Marredpally West, Hyderabad
                   </p>
                 </div>
               </div>
@@ -111,7 +131,7 @@ const Location: React.FC = () => {
                 />
                 <div>
                   <h3 className="text-xl font-bebas mb-1">Email Address</h3>
-                  <p className="text-light-dark">info@rvfitness.com</p>
+                  <p className="text-light-dark">rvfitness06@gmail.com</p>
                 </div>
               </div>
 
@@ -134,7 +154,7 @@ const Location: React.FC = () => {
                       </tr>
                       <tr>
                         <td className="pr-6">Sunday</td>
-                        <td>7:00 AM - 8:00 PM</td>
+                        <td>6:00 AM - 11:00 AM</td>
                       </tr>
                     </tbody>
                   </table>
@@ -161,8 +181,13 @@ const Location: React.FC = () => {
                     possible.
                   </p>
                 </div>
+              ) : formError ? (
+                <div className="bg-dark p-4 rounded-lg text-center">
+                  <h4 className="text-xl font-semibold mb-2 text-red-500">Error</h4>
+                  <p className="text-light-dark">{formError}</p>
+                </div>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <form ref={formRef} onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <label
