@@ -89,24 +89,31 @@ const LazyImage = ({
     }
   }, [inView, src]);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClick();
+  };
+
   return (
     <div
       ref={ref}
-      className="w-full h-64 bg-dark-light overflow-hidden rounded-lg"
+      className="w-full h-64 bg-dark-light overflow-hidden rounded-lg cursor-pointer relative"
+      onClick={handleClick}
     >
       {!isLoaded && (
-        <div className="w-full h-full flex items-center justify-center bg-dark-light">
+        <div className="absolute inset-0 flex items-center justify-center bg-dark-light z-10">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
       <img
         src={imgSrc}
         alt={alt}
-        onClick={onClick}
         className={`w-full h-full object-cover transition-opacity duration-300 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
         style={{ aspectRatio: "16/9" }}
+        onClick={handleClick}
       />
     </div>
   );
@@ -129,7 +136,13 @@ const Gallery: React.FC = () => {
 
   const closeLightbox = () => {
     setSelectedImage(null);
+    setSelectedAlt("");
     document.body.style.overflow = "auto";
+  };
+
+  const handleImageClick = (src: string, alt: string) => {
+    console.log("Image clicked:", alt); // Debug log
+    openLightbox(src, alt);
   };
 
   return (
@@ -157,9 +170,9 @@ const Gallery: React.FC = () => {
               <LazyImage
                 src={image.src}
                 alt={image.alt}
-                onClick={() => openLightbox(image.src, image.alt)}
+                onClick={() => handleImageClick(image.src, image.alt)}
               />
-              <div className="absolute inset-0 bg-dark bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+              <div className="absolute inset-0 bg-dark bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center pointer-events-none">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-light text-center p-4">
                   <p className="font-bebas text-xl">{image.alt}</p>
                   <span className="text-sm text-primary">Click to enlarge</span>
@@ -173,33 +186,48 @@ const Gallery: React.FC = () => {
       {/* Lightbox */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-dark bg-opacity-90 p-4 lightbox"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
           onClick={closeLightbox}
         >
-          <button
-            className="absolute top-6 right-6 text-light hover:text-primary transition-colors"
-            aria-label="Close lightbox"
+          <div
+            className="relative w-[85vw] h-[85vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+            style={{ minWidth: "320px", minHeight: "240px" }}
           >
-            <X size={32} />
-          </button>
-          <div className="max-w-full max-h-[85vh] relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <button
+              className="absolute -top-4 -right-4 text-white hover:text-primary transition-all z-30 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full p-3 shadow-xl hover:scale-110 transform transition-transform backdrop-blur-sm"
+              aria-label="Close lightbox"
+              onClick={closeLightbox}
+            >
+              <X size={24} />
+            </button>
+
+            <div className="absolute inset-0 flex items-center justify-center z-5">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
+
             <img
               src={selectedImage}
               alt={selectedAlt}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
+              className="max-w-full max-h-full object-contain rounded-xl relative z-10 shadow-2xl"
+              style={{
+                filter: "drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))",
+              }}
               onLoad={(e) => {
-                // Hide spinner after image loads
-                if (e.currentTarget.parentElement) {
-                  const spinner =
-                    e.currentTarget.parentElement.querySelector("div");
-                  if (spinner) spinner.style.display = "none";
-                }
+                const spinner =
+                  e.currentTarget.parentElement?.querySelector(
+                    "div.animate-spin"
+                  );
+                if (spinner) (spinner as HTMLElement).style.display = "none";
               }}
             />
+
+            {/* Image caption with glassmorphism effect */}
+            <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-40 backdrop-blur-md text-white p-4 rounded-xl z-20 border border-white border-opacity-20">
+              <p className="text-center font-bebas text-xl tracking-wide">
+                {selectedAlt}
+              </p>
+            </div>
           </div>
         </div>
       )}

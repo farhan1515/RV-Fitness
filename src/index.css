@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,12 +8,17 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply font-montserrat text-light-dark bg-dark;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bebas text-light tracking-wide;
   }
 }
@@ -22,7 +27,7 @@
   .container {
     @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
   }
-  
+
   .section-padding {
     @apply py-16 md:py-24;
   }
@@ -32,7 +37,7 @@
   }
 
   .section-title::after {
-    content: '';
+    content: "";
     @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-primary mt-2;
   }
 
@@ -57,7 +62,7 @@
   }
 
   .nav-link::after {
-    content: '';
+    content: "";
     @apply absolute left-0 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
   }
 
@@ -72,7 +77,7 @@
   .nav-link.active::after {
     @apply w-full;
   }
-  
+
   .card {
     @apply bg-dark-light rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300;
   }
@@ -87,9 +92,28 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Enhanced lightbox styling */
+.lightbox img {
+  max-height: 80vh; /* Maximum height as percentage of viewport */
+  max-width: 90vw; /* Maximum width as percentage of viewport */
+  width: auto; /* Override width constraint */
+  height: auto; /* Allow height to adjust based on aspect ratio */
+  object-fit: contain;
+  transform: scale(1); /* Start with normal scale */
+  transition: transform 0.3s ease-out;
+}
+
+.lightbox img:hover {
+  transform: scale(1.02); /* Subtle zoom on hover for better UX */
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Ensures images in the gallery maintain their aspect ratio */
@@ -104,14 +128,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1E1E1E;
+  background: #1e1e1e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #DC143C;
+  background: #dc143c;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B01030;
+  background: #b01030;
 }
