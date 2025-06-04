@@ -1,76 +1,73 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface PlanProps {
   title: string;
-  price: {
-    monthly: number;
-    yearly: number;
-  };
-  features: {
-    text: string;
-    included: boolean;
-  }[];
-  recommended?: boolean;
+  price: number;
+  duration: string;
+  popular?: boolean;
   delay: number;
 }
 
 const plans: PlanProps[] = [
   {
-    title: 'Basic',
-    price: { monthly: 39, yearly: 29 },
-    features: [
-      { text: 'Gym Access (6AM-10PM)', included: true },
-      { text: 'Basic Fitness Assessment', included: true },
-      { text: 'Access to Group Classes', included: false },
-      { text: 'Personal Training Session', included: false },
-      { text: 'Nutrition Consultation', included: false },
-      { text: '24/7 Access', included: false },
-    ],
+    title: 'Monthly',
+    price: 2500,
+    duration: '1 Month',
     delay: 0.1
   },
   {
-    title: 'Premium',
-    price: { monthly: 69, yearly: 59 },
-    recommended: true,
-    features: [
-      { text: 'Gym Access (6AM-10PM)', included: true },
-      { text: 'Advanced Fitness Assessment', included: true },
-      { text: 'Access to Group Classes', included: true },
-      { text: '2 Personal Training Sessions', included: true },
-      { text: 'Nutrition Consultation', included: false },
-      { text: '24/7 Access', included: false },
-    ],
+    title: 'Quarterly',
+    price: 5500,
+    duration: '3 Months',
+    popular: true,
     delay: 0.2
   },
   {
-    title: 'Ultimate',
-    price: { monthly: 99, yearly: 89 },
-    features: [
-      { text: 'Gym Access (24/7)', included: true },
-      { text: 'Advanced Fitness Assessment', included: true },
-      { text: 'Unlimited Group Classes', included: true },
-      { text: '4 Personal Training Sessions', included: true },
-      { text: 'Nutrition Consultation', included: true },
-      { text: 'Wellness App Premium', included: true },
-    ],
+    title: 'Half Yearly',
+    price: 9500,
+    duration: '6 Months',
     delay: 0.3
+  },
+  {
+    title: 'Annually',
+    price: 14999,
+    duration: '12 Months',
+    delay: 0.4
   },
 ];
 
-const Plan: React.FC<PlanProps> = ({ 
+const features = [
+  '24/7 Gym Access',
+  'All Equipment Access',
+  'Locker & Shower Facilities',
+  'Free WiFi',
+  'Basic Fitness Assessment',
+  'Monthly Progress Tracking'
+];
+
+interface PlanButtonProps {
+  onClick: () => void;
+}
+
+const Plan: React.FC<PlanProps & PlanButtonProps> = ({ 
   title, 
   price, 
-  features, 
-  recommended = false, 
-  delay 
+  duration,
+  popular = false, 
+  delay,
+  onClick
 }) => {
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
+
+  // Calculate savings for longer durations
+  const monthlyEquivalent = (price / parseInt(duration)).toFixed(0);
+  const savings = title !== 'Monthly' ? Math.round(((2500 - parseInt(monthlyEquivalent)) / 2500) * 100) : 0;
 
   return (
     <motion.div
@@ -78,114 +75,107 @@ const Plan: React.FC<PlanProps> = ({
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay }}
-      className={`card relative overflow-hidden border-2 ${
-        recommended 
-          ? 'border-primary transform scale-105 shadow-lg shadow-primary/20' 
-          : 'border-dark-lighter'
+      className={`relative overflow-hidden rounded-xl border-2 bg-dark-lighter/50 backdrop-blur-sm transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/20 ${
+        popular ? 'border-primary transform scale-[1.02]' : 'border-dark-lighter'
       }`}
     >
-      {recommended && (
-        <div className="absolute top-0 left-0 right-0 bg-primary py-1 text-center text-light font-bebas">
-          RECOMMENDED
+      {/* {popular && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary px-6 py-1 rounded-full text-sm font-bold text-light">
+          MOST POPULAR
         </div>
-      )}
+      )} */}
       
-      <div className={`text-center ${recommended ? 'mt-6' : 'mt-0'}`}>
-        <h3 className="text-3xl font-bebas mb-2">{title}</h3>
-      </div>
-      
-      <div className="text-center my-6">
-        <p className="text-light-dark text-sm uppercase mb-1">Starting from</p>
-        <div className="flex items-center justify-center">
-          <span className="text-4xl font-bebas text-primary">$</span>
-          <span className="text-5xl font-bebas mr-2">{price.monthly}</span>
-          <span className="text-light-dark">/month</span>
+      <div className={`p-8 ${popular ? 'pt-12' : 'pt-8'}`}>
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bebas text-primary mb-2">{title}</h3>
+          <p className="text-light-dark">{duration} Plan</p>
         </div>
-        <p className="text-light-dark text-sm mt-1">Or ${price.yearly}/month billed annually</p>
-      </div>
-      
-      <div className="space-y-3 mb-8">
-        {features.map((feature, index) => (
-          <div key={index} className="flex items-center">
-            {feature.included ? (
-              <Check size={18} className="text-secondary mr-2 flex-shrink-0" />
-            ) : (
-              <X size={18} className="text-light-darker mr-2 flex-shrink-0" />
-            )}
-            <span className={feature.included ? 'text-light-dark' : 'text-light-darker'}>
-              {feature.text}
-            </span>
+        
+        <div className="text-center mb-8">
+          <div className="flex items-baseline justify-center mb-2">
+            <span className="text-2xl mr-1">₹</span>
+            <span className="text-5xl font-bold">{price.toLocaleString()}</span>
           </div>
-        ))}
+          {savings > 0 && (
+            <div className="text-sm text-secondary">
+              Save {savings}% vs monthly
+            </div>
+          )}
+          <div className="text-light-dark text-sm mt-1">
+            {title !== 'Monthly' && `(₹${monthlyEquivalent}/month)`}
+          </div>
+        </div>
+        
+        <div className="space-y-3 mb-8">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start">
+              <Check size={18} className="text-secondary mt-0.5 mr-2 flex-shrink-0" />
+              <span className="text-light-dark">{feature}</span>
+            </div>
+          ))}
+        </div>
+        
+        <button
+          type="button"
+          className={`btn w-full btn-primary`}
+          onClick={onClick}
+        >
+          Join Now
+        </button>
       </div>
-      
-      <a 
-        href="#location" 
-        className={`btn w-full ${recommended ? 'btn-secondary' : 'btn-primary'}`}
-      >
-        Choose Plan
-      </a>
     </motion.div>
   );
 };
 
 const Membership: React.FC = () => {
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-  
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
 
+  // Helper to scroll smoothly to the Location form section
+  const scrollToLocation = () => {
+    const locationSection = document.getElementById('location');
+    if (locationSection) {
+      locationSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="membership" className="section-padding bg-dark-light">
-      <div className="container">
-        <motion.h2 
+    <section id="pricing" className="py-20 bg-dark">
+      <div className="container mx-auto px-4">
+        <motion.div 
           ref={ref}
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="section-title mb-8"
+          className="text-center mb-16"
         >
-          Membership Plans
-        </motion.h2>
+          <h2 className="text-4xl md:text-5xl font-bebas text-light mb-4">
+            Choose Your Plan
+          </h2>
+          <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+          <p className="text-light-dark max-w-2xl mx-auto">
+            Flexible membership options to suit your fitness journey. 
+            Longer commitments mean bigger savings!
+          </p>
+        </motion.div>
         
-        <div className="flex justify-center mb-16">
-          <div className="bg-dark-lighter p-1 rounded-full inline-flex">
-            <button
-              onClick={() => setBillingPeriod('monthly')}
-              className={`py-2 px-6 rounded-full transition-colors ${
-                billingPeriod === 'monthly' 
-                  ? 'bg-primary text-light' 
-                  : 'text-light-dark hover:text-light'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingPeriod('yearly')}
-              className={`py-2 px-6 rounded-full transition-colors ${
-                billingPeriod === 'yearly' 
-                  ? 'bg-primary text-light' 
-                  : 'text-light-dark hover:text-light'
-              }`}
-            >
-              Yearly <span className="text-secondary text-xs ml-1">Save 20%</span>
-            </button>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {plans.map((plan, index) => (
+            <Plan key={index} {...plan} onClick={scrollToLocation} />
+          ))}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <Plan 
-              key={index} 
-              {...plan} 
-              price={{
-                monthly: billingPeriod === 'monthly' ? plan.price.monthly : plan.price.yearly,
-                yearly: plan.price.yearly
-              }}
-            />
-          ))}
+        <div className="mt-12 text-center">
+          <p className="text-light-dark mb-4">Need help choosing the right plan?</p>
+          <button
+            type="button"
+            onClick={scrollToLocation}
+            className="inline-flex items-center text-primary hover:text-secondary transition-colors font-semibold"
+          >
+            Contact Us <span className="ml-2">→</span>
+          </button>
         </div>
       </div>
     </section>

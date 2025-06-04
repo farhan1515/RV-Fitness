@@ -53,12 +53,30 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
           >
-            <a href="#membership" className="btn btn-primary font-oswald">
+            <button
+              type="button"
+              className="btn btn-primary font-oswald"
+              onClick={() => {
+                const locationSection = document.getElementById('location');
+                if (locationSection) {
+                  locationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               Join Now
-            </a>
-            <a href="#about" className="btn btn-outline text-light font-oswald">
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline text-light font-oswald"
+              onClick={() => {
+                const locationSection = document.getElementById('location');
+                if (locationSection) {
+                  locationSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               Book a Free Trial
-            </a>
+            </button>
           </motion.div>
         </motion.div>
       </div>
