@@ -40,7 +40,7 @@ const plans: PlanProps[] = [
 ];
 
 const features = [
-  '24/7 Gym Access',
+  // '24/7 Gym Access',
   'All Equipment Access',
   'Locker & Shower Facilities',
   'Free WiFi',
